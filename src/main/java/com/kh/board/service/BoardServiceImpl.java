@@ -1,6 +1,7 @@
 package com.kh.board.service;
 
 import com.kh.board.controller.dto.request.BoardRequest;
+import com.kh.board.controller.dto.response.BoardResponse;
 import com.kh.board.entity.Board;
 import com.kh.board.entity.Member;
 import com.kh.board.mapper.BoardMapper;
@@ -24,10 +25,20 @@ public class BoardServiceImpl implements BoardService {
         return boardMapper.insertBoard(board, upFile);
     }
 
+    @Override
+    public BoardResponse.DetailDTO  selectBoard(int boardId) {
+        Board board = boardMapper.selectBoard(boardId);
+        System.out.println(board.getTitle());
+        System.out.println(board.getContents());
+        System.out.println(board.getFileName());
+        System.out.println("board.getMemberEmail()"+board.getMemberEmail());
 
-//    @Override
-//    public List<Board> insertBoard(RequestEntity<List<BoardRequest.SimpleDTO>> requestEntity) {
-//        return List.of();
-//    }
+        String email = board.getMemberEmail();
+        System.out.println("email:" + email);
+        Member member = boardMapper.selectNickName(email);
+        System.out.println(member.getNickName());
+        return BoardResponse.DetailDTO.formEntity(board, member.getNickName());
+    }
+
 
 }

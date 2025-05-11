@@ -9,6 +9,7 @@ import com.kh.board.service.BoardService;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,7 @@ public class BoardController {
         List<BoardResponse.SimpleDTO> result = new ArrayList<>();
         for (Board board : boardList) {
             result.add(BoardResponse.SimpleDTO.formEntity(board));
-            System.out.println(board.getBoardId());
-            System.out.println(board.getMemberEmail());
+
         }
 
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -48,7 +48,7 @@ public class BoardController {
 
         System.out.println("BOARDID:"+ board.getTitle());
 
-//        System.out.println(board);
+
         int result = boardService.insertBoard(board,upFile);
         if (result > 0) {
             return ResponseEntity.status(HttpStatus.CREATED).body("게시글 등록 성공");
@@ -58,8 +58,17 @@ public class BoardController {
 
     }
 
-    @GetMapping
-    public ResponseEntity<list<BoardResponse.DetailDTO>> getBoardDetail(){
-        List<Board> boardList = boardService.findAll();
+    @GetMapping("/{boardId}")
+    public ResponseEntity<BoardResponse.DetailDTO> getBoardDetail(@PathVariable("boardId") int boardId) {
+
+        BoardResponse.DetailDTO DDto = boardService.selectBoard(boardId);
+
+        System.out.println(DDto.getTitle());
+        System.out.println(DDto.getContents());
+        System.out.println(DDto.getMember_email());
+        System.out.println(DDto.getUpFile());
+        System.out.println(DDto.getNickName());
+        return new ResponseEntity<>(DDto, HttpStatus.OK);
     }
+
 }
